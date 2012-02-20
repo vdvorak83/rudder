@@ -17,7 +17,7 @@
   </div>
  </div>
    
-  <lift:asset.AcceptServer.head />
+  <lift:asset.AcceptNode.head />
   <hr class="spacer"/>
   <div id="new_servers_tab" class="tabs">
      <ul>
@@ -37,12 +37,12 @@
         It is enhanced with a "select" column
       </lift:ignore>
       <div class="err"><lift:Msgs>[error]</lift:Msgs></div>
-      <lift:asset.AcceptServer.list>
+      <lift:asset.AcceptNode.list>
         <pending:selectall/>
           <br/>
         <pending:servers/>
         
-        <div id="acceptServerGrid_paginate_area" class="nodisplay"/>
+        <div id="acceptNodeGrid_paginate_area" class="nodisplay"/>
         
         <p class="bottomButton rmargin">
           <span><pending:accept/></span>
@@ -50,7 +50,7 @@
         </p>
         <pending:errors/>
       
-      </lift:asset.AcceptServer.list>
+      </lift:asset.AcceptNode.list>
     </div>
     <div id="history">
      <div class="tabInform">
@@ -62,7 +62,7 @@
     </lift:asset.PendingHistoryGrid.displayAndInit>
     </div>
   </div>
-  <div id="manageNewServer"/>
+  <div id="manageNewNode"/>
   <lift:ignore>
   This div gets a popup injected within
   </lift:ignore>

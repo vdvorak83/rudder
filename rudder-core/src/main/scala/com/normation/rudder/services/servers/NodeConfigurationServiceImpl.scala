@@ -41,10 +41,10 @@ import scala.collection.mutable.ArrayBuffer
 import net.liftweb.common.EmptyBox
 import net.liftweb.common.EmptyBox
 import com.normation.inventory.domain.NodeId
-import com.normation.rudder.services.policies.TargetNodeConfiguration
+import com.normation.rudder.services.policies.targetNodeConfiguration
 import com.normation.inventory.domain.AgentType
-import com.normation.rudder.domain.policies.ConfigurationRuleId
-import com.normation.rudder.domain.policies.ConfigurationRule
+import com.normation.rudder.domain.policies.RuleId
+import com.normation.rudder.domain.policies.Rule
 import com.normation.utils.User
 import com.normation.eventlog.{EventLogNode,EventActor}
 import scala.collection._
@@ -71,7 +71,7 @@ import com.normation.rudder.domain.log._
 import com.normation.rudder.services.log._
 import com.normation.eventlog._
 import com.normation.inventory.domain._
-import com.normation.rudder.domain.policies.IdentifiableCFCPI
+import com.normation.rudder.domain.policies.RuleWithCf3PolicyDraft
 import com.normation.exceptions.TechnicalException
 
 /**
@@ -81,14 +81,14 @@ import com.normation.exceptions.TechnicalException
  */
 class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter, 
     repository : NodeConfigurationRepository,
-    policyService : PolicyPackageService,
+    techniqueRepository : TechniqueRepository,
     lockFolder : String) extends NodeConfigurationService {
 
   val LOGGER = LoggerFactory.getLogger(classOf[NodeConfigurationServiceImpl])
 
   LOGGER.info("Creating lock folder at {}", lockFolder)
   createLockFolder()
-  val fileLock = new File(lockFolder , "updateServers.lock");
+  val fileLock = new File(lockFolder , "updateNodes.lock");
   val channel = new RandomAccessFile(fileLock, "rw").getChannel();
   var lock = channel.tryLock(); // we want an early failure
   lock.release();
@@ -111,7 +111,7 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
     }
   }
   
-  def findServer(serverUUID: NodeId) : Option[NodeConfiguration] = {
+  def findNode(serverUUID: NodeId) : Option[NodeConfiguration] = {
     inLock {
       repository.findNodeConfiguration(serverUUID) match {
         case Full(server) => Some(server)
@@ -147,13 +147,13 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
 
   
   /**
-   * Update a node configuration using a TargetNodeConfiguration :
+   * Update a node configuration using a targetNodeConfiguration :
    * update the policy instances and the node context, as well as the agentsName 
    * (well, every fields actually)
    * @param target
    * @return
    */
-  def updateNodeConfiguration(target : TargetNodeConfiguration) : Box[NodeConfiguration] = {
+  def updateNodeConfiguration(target : targetNodeConfiguration) : Box[NodeConfiguration] = {
     //create a new node configuration based on "target" datas
     def createNodeConfiguration() : NodeConfiguration = {
       //we need to decide if it's a root node config or a simple one
@@ -208,10 +208,10 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
       LOGGER.debug("Updating node configuration %s".format(target.nodeInfo.id.value) )
       if (target.identifiableCFCPIs.size == 0) {
         LOGGER.warn("Cannot create server {} without policy", target.nodeInfo.id.value)
-        return ParamFailure[Seq[IdentifiableCFCPI]]("Cannot create a server without policies", Full(new PolicyException("Cannot create a server without any policies")), Empty, target.identifiableCFCPIs)
+        return ParamFailure[Seq[RuleWithCf3PolicyDraft]]("Cannot create a server without policies", Full(new TechniqueException("Cannot create a server without any policies")), Empty, target.identifiableCFCPIs)
       }
 
-      deduplicateUniquePolicyInstances(target.identifiableCFCPIs) match {
+      deduplicateUniqueDirectives(target.identifiableCFCPIs) match {
         case f : EmptyBox => 
           LOGGER.debug( (f ?~! "An error happened when finding unique policy instances").messageChain )
           LOGGER.error("Could not convert policy instance beans")
@@ -244,7 +244,7 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
               //server.id  = target.nodeInfo.id.value //not mutable TODO: use it in the constructor
               
               server.copy(
-                  __targetPoliciesInstances = Seq[IdentifiableCFCPI](),
+                  __targetPoliciesInstances = Seq[RuleWithCf3PolicyDraft](),
                   targetMinimalNodeConfig = new MinimalNodeConfig(
                       target.nodeInfo.name ,
                       target.nodeInfo.hostname ,
@@ -258,7 +258,7 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
               
             case Full(server : RootNodeConfiguration) =>                 
               server.copy(
-                  __targetPoliciesInstances = Seq[IdentifiableCFCPI](),
+                  __targetPoliciesInstances = Seq[RuleWithCf3PolicyDraft](),
                   targetMinimalNodeConfig = new MinimalNodeConfig(
                       target.nodeInfo.name ,
                       target.nodeInfo.hostname ,
@@ -282,11 +282,11 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
   }
   
   /**
-   * From the list of updated crs (is it what we need) ? and th elist of ALL NODES (caution, we must have 'em all)
+   * From the list of updated rules (is it what we need) ? and th elist of ALL NODES (caution, we must have 'em all)
    * update the serials, and save them
    */
-  def incrementSerials(crs: Seq[(ConfigurationRuleId,Int)], nodes : Seq[NodeConfiguration]) : Box[Seq[NodeConfiguration]] = {
-      repository.saveMultipleNodeConfigurations(nodes.map(x => x.setSerial(crs)))    
+  def incrementSerials(rules: Seq[(RuleId,Int)], nodes : Seq[NodeConfiguration]) : Box[Seq[NodeConfiguration]] = {
+      repository.saveMultipleNodeConfigurations(nodes.map(x => x.setSerial(rules)))    
   }
   
   
@@ -296,11 +296,11 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
    * @param target
    * @return
    */
-  def addNodeConfiguration(target : TargetNodeConfiguration) : Box[NodeConfiguration] = {
+  def addNodeConfiguration(target : targetNodeConfiguration) : Box[NodeConfiguration] = {
     inLock {
       if (target.identifiableCFCPIs.size == 0) {
         LOGGER.warn("Cannot create server {} without policy", target.nodeInfo.id.value)
-        return ParamFailure[Seq[IdentifiableCFCPI]]("Cannot create a server without policies", Full(new PolicyException("Cannot create a server without any policies")), Empty, target.identifiableCFCPIs)
+        return ParamFailure[Seq[RuleWithCf3PolicyDraft]]("Cannot create a server without policies", Full(new TechniqueException("Cannot create a server without any policies")), Empty, target.identifiableCFCPIs)
       }
       
       val isPolicyServer = target.nodeInfo match {
@@ -347,7 +347,7 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
         
         
       
-      deduplicateUniquePolicyInstances(target.identifiableCFCPIs) match {
+      deduplicateUniqueDirectives(target.identifiableCFCPIs) match {
         case f : EmptyBox => f
         case Full(policiesInstances) =>
             
@@ -418,9 +418,9 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
           LOGGER.warn("Must also write the modification of server {}", server.id)
           return ParamFailure[Seq[NodeId]]("NodeConfiguration " + server.id + " needs to be written too", Full(new VariableException("NodeConfiguration " + server + " needs to be written too")), Empty, ids)
         } else {
-          if (server.getPolicyInstances.size == 0) {
+          if (server.getDirectives.size == 0) {
             LOGGER.warn("Can't write a server without policy {}", server.id)
-            return Failure("Can't write a server without policy " + server, Full(throw new PolicyException("Can't write a server without policy ")), Empty)
+            return Failure("Can't write a server without policy " + server, Full(throw new TechniqueException("Can't write a server without policy ")), Empty)
             
           }
         }
@@ -476,7 +476,7 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
   /**
    * Returns all the servers having all the policies names (it is policy name, and not policy instance)
    */
-  def getNodeConfigurationsMatchingPolicy(policyName : PolicyPackageId) : Seq[NodeConfiguration] = {
+  def getNodeConfigurationsMatchingPolicy(policyName : TechniqueId) : Seq[NodeConfiguration] = {
     repository.findNodeConfigurationByTargetPolicyName(policyName) match {
       case Full(seq) => seq
       case Empty =>
@@ -486,13 +486,13 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
     }
   }
 
-  def getNodeConfigurationsMatchingPolicyInstance(policyInstanceId : CFCPolicyInstanceId) : Seq[NodeConfiguration] = {
-    repository.findNodeConfigurationByCurrentConfigurationRuleId(ConfigurationRuleId(policyInstanceId.value)) match {
+  def getNodeConfigurationsMatchingDirective(directiveId : Cf3PolicyDraftId) : Seq[NodeConfiguration] = {
+    repository.findNodeConfigurationByCurrentRuleId(RuleId(directiveId.value)) match {
       case Full(seq) => seq
       case Empty =>
-        throw new TechnicalException("Error when trying to find server with policy instance id %s. No error message left".format(policyInstanceId))
+        throw new TechnicalException("Error when trying to find server with policy instance id %s. No error message left".format(directiveId))
       case Failure(m,_,_)=>
-        throw new TechnicalException("Error when trying to find server with policy instance id %s. Error message was: ".format(policyInstanceId,m))
+        throw new TechnicalException("Error when trying to find server with policy instance id %s. Error message was: ".format(directiveId,m))
     }
   }
 
@@ -505,17 +505,17 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
    * @param pIs
    * @return
    */  
-  private def deduplicateUniquePolicyInstances(pIs: Seq[IdentifiableCFCPI]) : Box[Seq[IdentifiableCFCPI]] = {   
-    val policiesInstances = ArrayBuffer[IdentifiableCFCPI]();
+  private def deduplicateUniqueDirectives(pIs: Seq[RuleWithCf3PolicyDraft]) : Box[Seq[RuleWithCf3PolicyDraft]] = {   
+    val policiesInstances = ArrayBuffer[RuleWithCf3PolicyDraft]();
     
-    for (policyToAdd <- pIs.sortBy(x => x.policyInstance.priority)) {
+    for (policyToAdd <- pIs.sortBy(x => x.cf3PolicyDraft.priority)) {
       //Prior to add it, must check that it is not unique and not already present
-      val policy = policyService.getPolicy(policyToAdd.policyInstance.policyId).getOrElse(return Failure("Error: can not find policy with name '%s' with policy service".format(policyToAdd.policyInstance.policyId)))
+      val policy = techniqueRepository.get(policyToAdd.cf3PolicyDraft.techniqueId).getOrElse(return Failure("Error: can not find policy with name '%s' with policy service".format(policyToAdd.cf3PolicyDraft.techniqueId)))
       if (policy.isMultiInstance)
          policiesInstances += policyToAdd
       else {
         // if it is unique, add it only a same one is not already there
-        if (policiesInstances.filter(x => x.policyInstance.policyId == policyToAdd.policyInstance.policyId).size == 0)
+        if (policiesInstances.filter(x => x.cf3PolicyDraft.techniqueId == policyToAdd.cf3PolicyDraft.techniqueId).size == 0)
            policiesInstances += policyToAdd
         else
            LOGGER.warn("Ignoring less prioritized unique policy instance %s ".format(policyToAdd))
@@ -548,34 +548,34 @@ class NodeConfigurationServiceImpl(policyTranslator : TemplateWriter,
    * Adding a policy to a server, without saving anything
    * (this is not hyper sexy)
    */
-  private def addPolicies(server:NodeConfiguration, policyInstances :  Seq[IdentifiableCFCPI]) : Box[NodeConfiguration] = {
+  private def addPolicies(server:NodeConfiguration, directives :  Seq[RuleWithCf3PolicyDraft]) : Box[NodeConfiguration] = {
     
-    var modifiedServer = server
+    var modifiedNode = server
     
-    for (policyInstance <- policyInstances) {
+    for (directive <- directives) {
         // check the legit character of the policy
-        if (modifiedServer.getPolicyInstance(policyInstance.policyInstance.id) != None) {
-          LOGGER.warn("Cannot add a policy instance with the same id than an already existing one {} ", policyInstance.policyInstance.id)
-          return ParamFailure[IdentifiableCFCPI]("Duplicate policy instance", Full(new PolicyException("Duplicate policy instance " +policyInstance.policyInstance.id)), Empty, policyInstance)
+        if (modifiedNode.getDirective(directive.cf3PolicyDraft.id) != None) {
+          LOGGER.warn("Cannot add a policy instance with the same id than an already existing one {} ", directive.cf3PolicyDraft.id)
+          return ParamFailure[RuleWithCf3PolicyDraft]("Duplicate policy instance", Full(new TechniqueException("Duplicate policy instance " +directive.cf3PolicyDraft.id)), Empty, directive)
         }
         
 
-        val policy = policyService.getPolicy(policyInstance.policyInstance.policyId).getOrElse(return Failure("Error: can not find policy with name '%s' with policy service".format(policyInstance.policyInstance.policyId)))
+        val policy = techniqueRepository.get(directive.cf3PolicyDraft.techniqueId).getOrElse(return Failure("Error: can not find policy with name '%s' with policy service".format(directive.cf3PolicyDraft.techniqueId)))
 
         // Check that the policy can be multiinstances
-        if (modifiedServer.findPolicyInstanceByPolicy(policyInstance.policyInstance.policyId).filter(x => policy.isMultiInstance==false).size>0) {
-          LOGGER.warn("Cannot add a policy instance from the same non duplicable policy %s than an already existing one %s ".format(policyInstance.policyInstance.policyId), modifiedServer.findPolicyInstanceByPolicy(policyInstance.policyInstance.policyId))
-          return ParamFailure[IdentifiableCFCPI]("Duplicate unique policy", Full(new PolicyException("Duplicate unique policy " +policyInstance.policyInstance.policyId)), Empty, policyInstance)    
+        if (modifiedNode.findDirectiveByPolicy(directive.cf3PolicyDraft.techniqueId).filter(x => policy.isMultiInstance==false).size>0) {
+          LOGGER.warn("Cannot add a policy instance from the same non duplicable policy %s than an already existing one %s ".format(directive.cf3PolicyDraft.techniqueId), modifiedNode.findDirectiveByPolicy(directive.cf3PolicyDraft.techniqueId))
+          return ParamFailure[RuleWithCf3PolicyDraft]("Duplicate unique policy", Full(new TechniqueException("Duplicate unique policy " +directive.cf3PolicyDraft.techniqueId)), Empty, directive)    
         }
        
-        modifiedServer.addPolicyInstance(policyInstance) match {
-          case Full(server : NodeConfiguration) => modifiedServer = server
+        modifiedNode.addDirective(directive) match {
+          case Full(server : NodeConfiguration) => modifiedNode = server
           case f:EmptyBox => return f
         }
         
     }
         
-    return Full(modifiedServer)
+    return Full(modifiedNode)
     
   }  
 }

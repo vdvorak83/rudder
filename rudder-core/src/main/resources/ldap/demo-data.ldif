@@ -47,7 +47,7 @@ dn: nodeId=node1,ou=Nodes,cn=rudder-configuration
 changeType: add
 objectClass: rudderNode
 objectClass: top
-cn: Server 1
+cn: Node 1
 nodeId: node1
 description: a description
 isSystem: FALSE
@@ -126,7 +126,7 @@ isBroken: FALSE
 
 
 #######################################################################################################################
-## ServerInventory
+## NodeInventory
 #######################################################################################################################
 
 
@@ -264,7 +264,7 @@ objectClass: windowsNode
 osName: windows
 osVersion: N/A
 osKernelVersion: N/A
-osFullName: Microsoft Windows Server 2003 R2 Enterprise x64 Edition
+osFullName: Microsoft Windows Node 2003 R2 Enterprise x64 Edition
 windowsRegistrationCompany: Normation
 windowsId: 91118-301-6267284-52050
 windowsKey: DFVBV-YQ98G-DYXF3-Q9R89-C6CCD
@@ -431,7 +431,7 @@ objectClass: windowsNode
 osName: windows
 osVersion: N/A
 osKernelVersion: N/A
-osFullName: Microsoft Windows Server 2008
+osFullName: Microsoft Windows Node 2008
 windowsRegistrationCompany: Normation
 windowsId: 91118-301-6267284-52050
 windowsKey: DFVBV-YQ98G-DYXF3-Q9R89-C6CCD
@@ -490,7 +490,7 @@ cn: All windows
 isDynamic: TRUE
 nodeGroupId: 4b609e8e-3bcc-4b7e-8d26-1c8512fd0f4e
 jsonNodeGroupQuery: { "select":"node", "composition":"And", "where":[ {"objectType":"node","attribute":"OS","comparator":"eq","value":"Windows"}] }
-isActivated: TRUE
+isEnabled: TRUE
 isSystem: FALSE
 nodeId: node4
 nodeId: node8
@@ -504,7 +504,7 @@ cn: All servers
 isDynamic: TRUE
 nodeGroupId: 4fe62f07-ccb7-4836-ad55-8a104700048f
 jsonNodeGroupQuery: { "select":"node", "composition":"And", "where":[ {"objectType":"node","attribute":"nodeId","comparator":"exists","value":""}]}
-isActivated: TRUE
+isEnabled: TRUE
 isSystem: FALSE
 nodeId: node1
 nodeId: node2
@@ -524,7 +524,7 @@ cn: All linux
 isDynamic: TRUE
 nodeGroupId: f4b27025-b5a9-46fe-8289-cf9d56e07a8a
 jsonNodeGroupQuery: { "select":"node", "composition":"And", "where":[ {"objectType":"node","attribute":"OS","comparator":"eq","value":"Linux"}]}
-isActivated: TRUE
+isEnabled: TRUE
 isSystem: FALSE
 nodeId: node1
 nodeId: node2

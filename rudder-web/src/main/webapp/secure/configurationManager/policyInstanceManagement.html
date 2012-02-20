@@ -25,14 +25,14 @@ var clearSearchFieldTree = function(inputId, treeId) {
 </script>
 </head>
 
-<lift:configuration.PolicyInstanceManagement.head />
+<lift:configuration.DirectiveManagement.head />
 
 <div class="portlet">
   <div class="portlet-header">Policy Management</div>
   <div class="portlet-content">  
     <div class="intro">
       <div>
-        List, create and delete your instances of <a href="secure/configurationManager/policyTemplateLibraryManagement"><em>Policy Templates</em></a> and configure them.
+        List, create and delete your instances of <a href="secure/configurationManager/techniqueLibraryManagement"><em>Policy Templates</em></a> and configure them.
       </div>
     </div>
     <hr class="spacer"/>
@@ -49,7 +49,7 @@ var clearSearchFieldTree = function(inputId, treeId) {
             <p>- Click on the name of a <em>Policy Instance</em> to see its configuration items. Details of the <em>Policy Template</em> it's based on will also be displayed.</p>
 
             <p><br/>Additional <em>Policy Templates</em> may be available through the 
-              <a href="secure/configurationManager/policyTemplateLibraryManagement">Policy Templates screen</a>.</p>
+              <a href="secure/configurationManager/techniqueLibraryManagement">Policy Templates screen</a>.</p>
           </div>
 
           <div id="userTree_actions_zone" style="margin:10px;">
@@ -59,7 +59,7 @@ var clearSearchFieldTree = function(inputId, treeId) {
             <span class="tooltipContent" id="treeSearchTooltip">Type at least three character to search element (name or description) in the tree.</span>
             <span onclick="clearSearchFieldTree('#treeSearch', '#userTree')"><img src="/images/close-cross.png" alt="Clear Search" title="Clear Search" width="16" height="16" style="float:none;margin:0px;vertical-align: bottom"/></span>
           </div>
-          <lift:configuration.PolicyInstanceManagement.userLibrary />
+          <lift:configuration.DirectiveManagement.userLibrary />
         </div>
       </div>
     </div>
@@ -67,20 +67,20 @@ var clearSearchFieldTree = function(inputId, treeId) {
       <div class="portlet">
         <div class="portlet-header"><span id="detailsPortletTitle">Policy Template summary</span></div>
         <div class="portlet-content">
-          <lift:configuration.PolicyInstanceManagement.policyTemplateDetails>
+          <lift:configuration.DirectiveManagement.techniqueDetails>
             <div id="polityTemplateDetails">
             <fieldset class="deca"><legend id="detailFieldsetId">Template details</legend>
-              <div id="policyInstanceIntro">
-                The policy instance <b class="pi">[policy]</b> is based on following policy template:
+              <div id="directiveIntro">
+                The policy instance <b class="directive">[policy]</b> is based on following policy template:
                 <br/><br/>
               </div>
               <div>
-                <h3><span id="policyTemplateName">[policy template name]</span></h3>
-                <i><span id="policyTemplateDescription">[pt.description]</span></i>
+                <h3><span id="techniqueName">[policy template name]</span></h3>
+                <i><span id="techniqueDescription">[technique.description]</span></i>
               </div>
             
               <div class="groupDiv">
-                <p id="policyTemplateLongDescription">[pt.longDescription]</p>
+                <p id="techniqueLongDescription">[technique.longDescription]</p>
                 <p id="isSingle">[Unique policy template]</p>
                 <p></p>
                 <p><span id="compatibility">[Supported operating systems : debian-5]</span></p>
@@ -103,22 +103,22 @@ var clearSearchFieldTree = function(inputId, treeId) {
               <button id="addButton">[Add a new instance]</button>
             </fieldset>
             </div>
-          </lift:configuration.PolicyInstanceManagement.policyTemplateDetails>       
+          </lift:configuration.DirectiveManagement.techniqueDetails>       
         </div>
       </div>
     </div>
     
     <div id="createPiPopup" class="nodisplay">
       <lift:ignore>
-      This div gets the content of the createPolicyInstance injected within
+      This div gets the content of the createDirective injected within
       </lift:ignore>
     </div>
     
     <hr class="spacer"/>
-    <a name="policyInstanceDetails"/>
+    <a name="directiveDetails"/>
     <div>
-      <div class="policyInstanceDetails">
-        <lift:configuration.PolicyInstanceManagement.showPolicyInstanceDetails />
+      <div class="directiveDetails">
+        <lift:configuration.DirectiveManagement.showDirectiveDetails />
       </div>
     </div>
   </div>

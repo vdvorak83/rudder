@@ -4,7 +4,7 @@
 <title>Rudder - Policy Template Library Management</title>
 </head>
 
-<lift:configuration.PolicyTemplateLibraryManagement.head />
+<lift:configuration.TechniqueLibraryManagement.head />
 
 <div class="portlet">
   <div class="portlet-header">Policy Template Library Management</div>
@@ -13,13 +13,13 @@
       <div>
         View available policy templates and configure your custom policy library.
         <br/>
-        Drag'n'drop new policy templates from Reference library to User library categories to be able to create <a href="secure/configurationManager/policyInstanceManagement">new policies</a>.
+        Drag'n'drop new policy templates from Reference library to User library categories to be able to create <a href="secure/configurationManager/directiveManagement">new policies</a>.
         <br/>
         Drag'n'drop policy templates and categories in user library so that everything is nice and tidy.
         <br/>
       </div>
       <div>
-        <div class="lift:configuration.PolicyTemplateLibraryManagement.reloadPolicyTemplateLibrary" id="reloadPTLibForm">
+        <div class="lift:configuration.TechniqueLibraryManagement.reloadTechniqueLibrary" id="reloadPTLibForm">
           <form class="lift:form.ajax">
             <span>You can load the last available version of the policy template library</span>
             <input type="submit" value="Reload"/>
@@ -34,7 +34,7 @@
       <div class="portlet">
         <div class="portlet-header">Reference policy template library</div>
         <div class="portlet-content">
-          <lift:configuration.PolicyTemplateLibraryManagement.systemLibrary />
+          <lift:configuration.TechniqueLibraryManagement.systemLibrary />
         </div>
       </div>
     </div>
@@ -42,19 +42,19 @@
       <div class="portlet">
         <div class="portlet-header">User policy template library</div>
         <div class="portlet-content">
-          <lift:configuration.PolicyTemplateLibraryManagement.userLibraryAction />
-          <lift:configuration.PolicyTemplateLibraryManagement.userLibrary />
+          <lift:configuration.TechniqueLibraryManagement.userLibraryAction />
+          <lift:configuration.TechniqueLibraryManagement.userLibrary />
         </div>
       </div>
     </div>
     
     <hr class="spacer"/>
 
-    <lift:configuration.PolicyTemplateLibraryManagement.bottomPanel /> 
+    <lift:configuration.TechniqueLibraryManagement.bottomPanel /> 
         
-<!--    <div class="policyTemplateDetails">-->
-<!--      <fieldset class="policyTemplateDetailsFieldset"><legend>Policy template details</legend>-->
-<!--        <lift:PolicyTemplateLibraryManagement.showPolicyTemplateDetails />-->
+<!--    <div class="techniqueDetails">-->
+<!--      <fieldset class="techniqueDetailsFieldset"><legend>Policy template details</legend>-->
+<!--        <lift:TechniqueLibraryManagement.showTechniqueDetails />-->
 <!--      </fieldset>-->
 <!--    </div>-->
 <!--    -->
@@ -63,7 +63,7 @@
 <!--      <div class="portlet">-->
 <!--        <div class="portlet-header">Category in user library details</div>-->
 <!--        <div class="portlet-content">-->
-<!--          <lift:PolicyTemplateLibraryManagement.showUserCategoryDetails />  -->
+<!--          <lift:TechniqueLibraryManagement.showUserCategoryDetails />  -->
 <!--        </div>-->
 <!--      </div>-->
 <!--    </div>    -->
