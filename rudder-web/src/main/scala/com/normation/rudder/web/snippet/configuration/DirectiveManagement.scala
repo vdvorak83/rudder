@@ -265,8 +265,8 @@ class DirectiveManagement extends DispatchSnippet with Loggable {
   
   private[this] def setRightPanelHeader(isDirective:Boolean) : JsCmd = {
     val title = 
-      if(isDirective) "Policy general information"
-      else "Policy Template summary"
+      if(isDirective) "Directive general information"
+      else "Technique summary"
       
       SetHtml("detailsPortletTitle", Text(title))
   }

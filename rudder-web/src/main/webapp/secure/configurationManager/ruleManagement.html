@@ -8,17 +8,17 @@
 <lift:configuration.RuleManagement.head />
 
 <div class="portlet">
-  <div class="portlet-header">Configuration Rule Management</div>
+  <div class="portlet-header">Rule Management</div>
   <div class="portlet-content">
     <div class="intro">
       <div>
-        This portlet allows you to list, create, delete and change <em>Configuration Rules</em> on your infrastructure, based on previously defined <a href="secure/configurationManager/directiveManagement"><em>Policy Instances</em></a>. 
+        This portlet allows you to list, create, delete and change <em>Rules</em> on your infrastructure, based on previously defined <a href="secure/configurationManager/directiveManagement"><em>Directives</em></a>. 
       </div>
     </div>
     <hr class="spacer"/>
     <div>
       <div class="portlet">
-        <div class="portlet-header">List of configuration rules</div>
+        <div class="portlet-header">List of rules</div>
         <div class="portlet-content">
           <lift:configuration.RuleManagement.viewRules />
         </div>
@@ -28,7 +28,7 @@
     <hr class="spacer"/>
     <div>
       <div class="portlet">
-        <div class="portlet-header">Configuration rule settings</div>
+        <div class="portlet-header">Rule settings</div>
         <div class="portlet-content">
           <lift:configuration.RuleManagement.editRule />  
         </div>
@@ -37,11 +37,11 @@
     
   </div>
 
-  <div id="createCRPopup" class="nodisplay">
+  <div id="createRulePopup" class="nodisplay">
     <lift:ignore>
       This div gets the content of the createRule injected within
     </lift:ignore>
-    <div id="createCRContainer"/>
+    <div id="createRuleContainer"/>
   </div>
 
 

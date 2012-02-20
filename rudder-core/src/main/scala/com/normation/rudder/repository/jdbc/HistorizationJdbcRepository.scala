@@ -396,7 +396,7 @@ object SerializedDirectives {
 }
 
 object Directives extends Schema {
-  val directives = table[SerializedDirectives]("policyinstances")
+  val directives = table[SerializedDirectives]("directives")
   
   on(directives)(t => declare( 
       t.id.is(autoIncremented("directivesid"), primaryKey)))

@@ -188,6 +188,6 @@ class CreateRulePopup(
 
 
 object CreateRulePopup {
-  val htmlId_popupContainer = "createCRContainer"
-  val htmlId_popup = "createCRPopup"
+  val htmlId_popupContainer = "createRuleContainer"
+  val htmlId_popup = "createRulePopup"
 }
