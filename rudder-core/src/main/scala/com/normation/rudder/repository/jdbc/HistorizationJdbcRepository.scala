@@ -426,7 +426,7 @@ case class SerializedRuleGroups(
 
 case class SerializedRuleDirectives(
     @Column("rulepkeyid") crid: Long,// really, the id (not the cr one)
-    @Column("directiveid") piid: String
+    @Column("directiveid") directiveId: String
 ) extends KeyedEntity[CompositeKey2[Long,String]]  {
  
   def id = compositeKey(crid, directiveId)

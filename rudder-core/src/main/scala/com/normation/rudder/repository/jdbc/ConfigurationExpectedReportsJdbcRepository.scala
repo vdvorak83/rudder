@@ -322,6 +322,7 @@ object RuleExpectedReportsMapper extends RowMapper[ExpectedConfRuleMapping] {
       rs.getInt("pkid"),
       rs.getInt("nodejoinkey"),
       new RuleId(rs.getString("ruleid")),
+      rs.getInt("serial"),
       DirectiveId(rs.getString("directiveid")), 
       rs.getString("component"),
       rs.getInt("cardinality"),

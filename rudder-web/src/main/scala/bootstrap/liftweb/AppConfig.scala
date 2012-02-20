@@ -211,7 +211,7 @@ class AppConfig extends Loggable {
   
   val rulesDirectoryName = "configuration-rules"
     
-  // policy.xml parser
+  // metadata.xml parser
   @Bean
   def techniqueParser = {
     val variableSpecParser = new VariableSpecParser()
@@ -382,7 +382,7 @@ class AppConfig extends Loggable {
         techniqueParser
       , gitRevisionProvider
       , gitRepo
-      , "policy.xml", "category.xml"
+      , "metadata.xml", "category.xml"
       , Some(relativePath)
     )
   }
