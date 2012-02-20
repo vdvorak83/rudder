@@ -52,7 +52,7 @@ import scala.collection.JavaConversions._
 
 class ReportsJdbcRepository(jdbcTemplate : JdbcTemplate) extends ReportsRepository {
 
-  val baseQuery = "select executiondate, nodeid, configurationruleid, policyinstanceid, serial, component, keyValue, executionTimeStamp, eventtype, policy, msg from RudderSysEvents where 1=1 ";
+  val baseQuery = "select executiondate, nodeid, ruleid, directiveid, serial, component, keyValue, executionTimeStamp, eventtype, policy, msg from RudderSysEvents where 1=1 ";
   
   
   // find the last full run per node
@@ -60,8 +60,8 @@ class ReportsJdbcRepository(jdbcTemplate : JdbcTemplate) extends ReportsReposito
   val lastQueryByNode = "select nodeid as Node, max(executiontimestamp) as Time from ruddersysevents where ruleId = 'hasPolicyServer-root' and component = 'common' and keyValue = 'EndRun' and nodeid = ? group by nodeid"
   // todo : add a time limit
     
-  val joinQuery = "select executiondate, nodeid, configurationruleid, policyinstanceid, serial, component, keyValue, executionTimeStamp, eventtype, policy, msg from RudderSysEvents join (" + lastQuery +" ) as Ordering on Ordering.Node = nodeid and executionTimeStamp = Ordering.Time where 1=1";
-  val joinQueryByNode = "select executiondate, nodeid, configurationruleid, policyinstanceid, serial, component, keyValue, executionTimeStamp, eventtype, policy, msg from RudderSysEvents join (" + lastQueryByNode +" ) as Ordering on Ordering.Node = nodeid and executionTimeStamp = Ordering.Time where 1=1";
+  val joinQuery = "select executiondate, nodeid, ruleId, directiveid, serial, component, keyValue, executionTimeStamp, eventtype, policy, msg from RudderSysEvents join (" + lastQuery +" ) as Ordering on Ordering.Node = nodeid and executionTimeStamp = Ordering.Time where 1=1";
+  val joinQueryByNode = "select executiondate, nodeid, ruleId, directiveid, serial, component, keyValue, executionTimeStamp, eventtype, policy, msg from RudderSysEvents join (" + lastQueryByNode +" ) as Ordering on Ordering.Node = nodeid and executionTimeStamp = Ordering.Time where 1=1";
   
   def findReportsByRule(ruleId: RuleId, serial : Option[Int], beginDate: Option[DateTime], endDate: Option[DateTime]): Seq[Reports] = {
     var query = baseQuery + " and ruleId = ? "
@@ -122,8 +122,13 @@ class ReportsJdbcRepository(jdbcTemplate : JdbcTemplate) extends ReportsReposito
     
   }
   
-  def findReportsByNode(nodeId : NodeId, ruleId : RuleId, 
-      serial : Int, beginDate: DateTime, endDate: Option[DateTime]): Seq[Reports] = {
+  def findReportsByNode(
+      nodeId : NodeId
+    , ruleId : RuleId
+    , serial : Int
+    , beginDate: DateTime
+    , endDate: Option[DateTime]
+   ): Seq[Reports] = {
     var query = baseQuery + " and nodeId = ?  and ruleId = ? and serial = ? and executionTimeStamp >= ?"
     var array = mutable.Buffer[AnyRef](nodeId.value, 
         ruleId.value, 
@@ -148,7 +153,11 @@ class ReportsJdbcRepository(jdbcTemplate : JdbcTemplate) extends ReportsReposito
   /**
    * Return the last (really the last, serial wise, with full execution) reports for a configuration rule
    */
-  def findLastReportByRule(ruleId : RuleId, serial : Int, node : Option[NodeId]) : Seq[Reports] = {
+  def findLastReportByRule(
+      ruleId : RuleId
+    , serial : Int
+    , node : Option[NodeId]
+   ) : Seq[Reports] = {
     var query = ""
     var array = mutable.Buffer[AnyRef]()
 
@@ -168,9 +177,11 @@ class ReportsJdbcRepository(jdbcTemplate : JdbcTemplate) extends ReportsReposito
   
   
   
-  def findExecutionTimeByNode(nodeId : NodeId, 
-      beginDate: DateTime, 
-      endDate: Option[DateTime] ) : Seq[DateTime] = {
+  def findExecutionTimeByNode(
+      nodeId : NodeId
+    , beginDate: DateTime
+    , endDate: Option[DateTime]
+    ) : Seq[DateTime] = {
     var query = "select distinct executiontimestamp as executionDate from ruddersysevents where ruleId = 'hasPolicyServer-root' and component = 'common' and keyValue = 'EndRun' and nodeId = ? and executiontimestamp >= ?"
        
     var array = mutable.Buffer[AnyRef](nodeId.value, new Timestamp(beginDate.getMillis))

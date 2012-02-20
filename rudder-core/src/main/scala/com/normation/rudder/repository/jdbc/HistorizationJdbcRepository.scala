@@ -364,14 +364,14 @@ object Nodes extends Schema {
 }
 
 case class SerializedDirectives(
-    @Column("policyinstanceid") directiveId: String,
-    @Column("policyinstancename") directiveName: String,
-    @Column("policyinstancedescription") directiveDescription: String,
+    @Column("directiveid") directiveId: String,
+    @Column("directivename") directiveName: String,
+    @Column("directivedescription") directiveDescription: String,
     @Column("priority") priority: Int,
-    @Column("policypackagename") policyPackageName: String,
-    @Column("policytemplatehumanname") techniqueHumanName: String,
-    @Column("policypackagedescription") policyPackageDescription: String,
-    @Column("policypackageversion") policyPackageVersion: String,
+    @Column("techniquename") policyPackageName: String,
+    @Column("techniquehumanname") techniqueHumanName: String,
+    @Column("techniquedescription") policyPackageDescription: String,
+    @Column("techniqueversion") policyPackageVersion: String,
     @Column("starttime") startTime: Timestamp,
     @Column("endtime") endTime: Timestamp
 ) extends KeyedEntity[Long]  {
@@ -399,11 +399,11 @@ object Directives extends Schema {
   val directives = table[SerializedDirectives]("policyinstances")
   
   on(directives)(t => declare( 
-      t.id.is(autoIncremented("policyinstancesid"), primaryKey)))
+      t.id.is(autoIncremented("directivesid"), primaryKey)))
 }
 
 case class SerializedRules(
-    @Column("configurationruleid") ruleId: String,
+    @Column("ruleid") ruleId: String,
     @Column("serial") serial: Int,
     @Column("name") name: String,
     @Column("shortdescription") shortDescription: String,
@@ -412,12 +412,12 @@ case class SerializedRules(
     @Column("starttime") startTime: Timestamp,
     @Column("endtime") endTime: Timestamp
 ) extends KeyedEntity[Long]  {
-  @Column("id")
+  @Column("rulepkeyid")
   val id = 0L
 }
 
 case class SerializedRuleGroups(
-    @Column("crid") crid: Long,// really, the id (not the rule one)
+    @Column("rulepkeyid") crid: Long,// really, the id (not the cr one)
     @Column("groupid") groupId: String
 ) extends KeyedEntity[CompositeKey2[Long,String]]  {
  
@@ -425,8 +425,8 @@ case class SerializedRuleGroups(
 }
 
 case class SerializedRuleDirectives(
-    @Column("crid") crid: Long,// really, the id (not the rule one)
-    @Column("policyinstanceid") directiveId: String
+    @Column("rulepkeyid") crid: Long,// really, the id (not the cr one)
+    @Column("directiveid") piid: String
 ) extends KeyedEntity[CompositeKey2[Long,String]]  {
  
   def id = compositeKey(crid, directiveId)
@@ -463,12 +463,12 @@ object SerializedRules {
 }
 
 object Rules extends Schema {
-  val rules = table[SerializedRules]("configurationrules")
-  val groups = table[SerializedRuleGroups]("configurationrulesgroups")
-  val directives = table[SerializedRuleDirectives]("configurationrulespolicyinstance")
+  val rules = table[SerializedRules]("rules")
+  val groups = table[SerializedRuleGroups]("rulesgroupjoin")
+  val directives = table[SerializedRuleDirectives]("rulesdirectivesjoin")
   
   on(rules)(t => declare( 
-      t.id.is(autoIncremented("configurationrulesid"), primaryKey)))
+      t.id.is(autoIncremented("rulesid"), primaryKey)))
 
 }
 

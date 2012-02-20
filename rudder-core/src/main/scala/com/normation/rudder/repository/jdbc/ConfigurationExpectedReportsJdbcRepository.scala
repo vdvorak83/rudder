@@ -60,17 +60,17 @@ class RuleExpectedReportsJdbcRepository(jdbcTemplate : JdbcTemplate)
   val TABLE_NAME = "expectedreports"
   val NODE_TABLE_NAME = "expectedreportsnodes"
     
-  val baseQuery = "select pkid, nodejoinkey, configurationruleid, serial, policyinstanceid, component, cardinality, componentsvalues, begindate, enddate  from " + TABLE_NAME + "  where 1=1 ";
+  val baseQuery = "select pkid, nodejoinkey, ruleid, serial, directiveid, component, cardinality, componentsvalues, begindate, enddate  from " + TABLE_NAME + "  where 1=1 ";
 
   def findAllCurrentExpectedReports(): scala.collection.Set[RuleId] = {
-    jdbcTemplate.query("select distinct configurationruleid from "+ TABLE_NAME +
+    jdbcTemplate.query("select distinct ruleid from "+ TABLE_NAME +
         "      where enddate is null",
           RuleIdMapper).toSet;
   }
 
   
   def findAllCurrentExpectedReportsAndSerial(): scala.collection.Map[RuleId, Int] = {
-    jdbcTemplate.query("select distinct configurationruleid, serial from "+ TABLE_NAME +
+    jdbcTemplate.query("select distinct ruleid, serial from "+ TABLE_NAME +
         "      where enddate is null",
           RuleIdAndSerialMapper).toMap;
   }
@@ -82,7 +82,7 @@ class RuleExpectedReportsJdbcRepository(jdbcTemplate : JdbcTemplate)
    */
   def findCurrentExpectedReports(ruleId : RuleId) : Option[RuleExpectedReports] = {
     val list = toRuleExpectedReports(jdbcTemplate.query(baseQuery +
-        "      and enddate is null and configurationruleid = ?",
+        "      and enddate is null and ruleid = ?",
           Array[AnyRef](ruleId.value), 
           RuleExpectedReportsMapper).toSeq)
 
@@ -138,10 +138,10 @@ class RuleExpectedReportsJdbcRepository(jdbcTemplate : JdbcTemplate)
             new ExpectedConfRuleMapping(0, nodeJoinKey, ruleId, serial,
                   policy.directiveId, component.componentName, component.cardinality, component.componentsValues, DateTime.now(), None)
           }
-          "select pkid, nodejoinkey, configurationruleid, serial, policyinstanceid, component, componentsvalues, cardinality, begindate, enddate  from "+ TABLE_NAME + "  where 1=1 ";
+          "select pkid, nodejoinkey, ruleid, serial, directiveid, component, componentsvalues, cardinality, begindate, enddate  from "+ TABLE_NAME + "  where 1=1 ";
 
           list.foreach(entry => 
-                jdbcTemplate.update("insert into "+ TABLE_NAME +" ( nodejoinkey, configurationruleid, serial, policyinstanceid, component, cardinality, componentsValues, begindate) " + 
+                jdbcTemplate.update("insert into "+ TABLE_NAME +" ( nodejoinkey, ruleid, serial, directiveid, component, cardinality, componentsValues, begindate) " + 
                     " values (?,?,?,?,?,?,?,?)",
                   new java.lang.Integer(entry.nodeJoinKey), ruleId.value, new java.lang.Integer(entry.serial), entry.policyExpectedReport.value,
                   entry.component,  new java.lang.Integer(entry.cardinality), ComponentsValuesSerialiser.serializeComponents(entry.componentsValues), new Timestamp(entry.beginDate.getMillis)
@@ -198,7 +198,7 @@ class RuleExpectedReportsJdbcRepository(jdbcTemplate : JdbcTemplate)
    * @return
    */
   def findExpectedReportsByNode(nodeId : NodeId, beginDate : Option[DateTime], endDate : Option[DateTime]) : Seq[RuleExpectedReports] = {
-    var joinQuery = "select pkid, "+ TABLE_NAME +".nodejoinkey, configurationruleid, policyinstanceid, serial, component, componentsvalues, cardinality, begindate, enddate  from "+ TABLE_NAME +
+    var joinQuery = "select pkid, "+ TABLE_NAME +".nodejoinkey, ruleid, directiveid, serial, component, componentsvalues, cardinality, begindate, enddate  from "+ TABLE_NAME +
         " join "+ NODE_TABLE_NAME +" on "+ NODE_TABLE_NAME +".nodejoinkey = "+ TABLE_NAME +".nodejoinkey " +
         " where nodeid = ? " 
   
@@ -228,7 +228,7 @@ class RuleExpectedReportsJdbcRepository(jdbcTemplate : JdbcTemplate)
    * @return
    */
   def findCurrentExpectedReportsByNode(nodeId : NodeId) : Seq[RuleExpectedReports] = {
-    val joinQuery = "select pkid, "+ TABLE_NAME +".nodejoinkey, configurationruleid,policyinstanceid, serial, component, componentsvalues, cardinality, begindate, enddate  from "+ TABLE_NAME +
+    val joinQuery = "select pkid, "+ TABLE_NAME +".nodejoinkey, ruleid,directiveid, serial, component, componentsvalues, cardinality, begindate, enddate  from "+ TABLE_NAME +
         " join "+ NODE_TABLE_NAME +" on "+ NODE_TABLE_NAME +".nodejoinkey = "+ TABLE_NAME +".nodejoinkey " +
         "      where enddate is null and  "+ NODE_TABLE_NAME +".nodeId = ?";
 
@@ -268,7 +268,7 @@ class RuleExpectedReportsJdbcRepository(jdbcTemplate : JdbcTemplate)
   }
   
   private def getNextVersionId() : Int = {
-    jdbcTemplate.queryForInt("SELECT nextval('confVersionId')")
+    jdbcTemplate.queryForInt("SELECT nextval('ruleVersionId')")
   }
   
   
@@ -321,9 +321,8 @@ object RuleExpectedReportsMapper extends RowMapper[ExpectedConfRuleMapping] {
     new ExpectedConfRuleMapping(
       rs.getInt("pkid"),
       rs.getInt("nodejoinkey"),
-      new RuleId(rs.getString("configurationruleid")),
-      rs.getInt("serial"),
-      DirectiveId(rs.getString("policyinstanceid")), 
+      new RuleId(rs.getString("ruleid")),
+      DirectiveId(rs.getString("directiveid")), 
       rs.getString("component"),
       rs.getInt("cardinality"),
       ComponentsValuesSerialiser.unserializeComponents(rs.getString("componentsvalues")),
@@ -337,12 +336,12 @@ object RuleExpectedReportsMapper extends RowMapper[ExpectedConfRuleMapping] {
 
 object RuleIdMapper extends RowMapper[RuleId] {
   def mapRow(rs : ResultSet, rowNum: Int) : RuleId = {
-    new RuleId(rs.getString("configurationruleid"))
+    new RuleId(rs.getString("ruleid"))
   }
 }
 object RuleIdAndSerialMapper extends RowMapper[(RuleId, Int)] {
   def mapRow(rs : ResultSet, rowNum: Int) : (RuleId, Int) = {
-    (new RuleId(rs.getString("configurationruleid")) , rs.getInt("serial"))
+    (new RuleId(rs.getString("ruleid")) , rs.getInt("serial"))
   }
 }
 
