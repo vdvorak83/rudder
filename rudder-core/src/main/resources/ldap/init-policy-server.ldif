@@ -131,7 +131,7 @@ isSystem: TRUE
 ## Policy instances
 #######################################################################################################################
 
-dn: directiveId=root-distributePolicy,activeTechniqueId=distributePolicy,techniqueCategoryId=SystemActiveTechnique,techniqueCategoryId=ActiveTechniqueLibraryRoot,ou=Rudder,cn=rudder-configuration
+dn: directiveId=root-distributePolicy,activeTechniqueId=distributePolicy,techniqueCategoryId=Rudder Internal,techniqueCategoryId=Active Techniques,ou=Rudder,cn=rudder-configuration
 objectClass: directive
 objectClass: top
 directiveId: root-distributePolicy
@@ -145,7 +145,7 @@ directiveVariable: SERVINGIP[0]:%%POLICY_SERVER_IP%%
 
 # common (has policy server)
 
-dn: directiveId=common-root,activeTechniqueId=common,techniqueCategoryId=SystemActiveTechnique,techniqueCategoryId=ActiveTechniqueLibraryRoot,ou=Rudder,cn=rudder-configuration
+dn: directiveId=common-root,activeTechniqueId=common,techniqueCategoryId=Rudder Internal,techniqueCategoryId=Active Techniques,ou=Rudder,cn=rudder-configuration
 objectClass: directive
 objectClass: top
 directiveId: common-root
@@ -182,7 +182,7 @@ cn: distributePolicy
 description: Distribute Policy - Technical
 isEnabled: TRUE
 isSystem: TRUE
-longDescription: This CR is to distribute policies to the hosts
+longDescription: This rule allows to distribute policies to nodes
 serial: 0
 
 dn: ruleId=hasPolicyServer-root,ou=Configuration Rules,ou=Rudder,cn=rudder-configuration
@@ -195,6 +195,6 @@ cn: Rudder system policy: basic setup (common)
 description: Common - Technical
 isEnabled: TRUE
 isSystem: TRUE
-longDescription: This CR is the basic CR all nodes must have
+longDescription: This is the basic system rule which all nodes must have.
 serial: 0
 

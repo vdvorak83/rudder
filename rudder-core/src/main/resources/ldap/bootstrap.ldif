@@ -122,25 +122,25 @@ isSystem: TRUE
 
 
 # User policy template library
-dn: techniqueCategoryId=ActiveTechniqueLibraryRoot,ou=Rudder,cn=rudder-configuration
+dn: techniqueCategoryId=Active Techniques,ou=Rudder,cn=rudder-configuration
 objectClass: techniqueCategory
 objectClass: top
-cn: User policy template library's root
-description: This is the root category for the user library of Policy Templates. It contains subcategories and policy templates
-techniqueCategoryId: ActiveTechniqueLibraryRoot
+cn: Root of active techniques's library
+description: This is the root category for active techniques. It contains subcategories, actives techniques and directives
+techniqueCategoryId: Active Techniques
 isSystem: TRUE
 
 # System user policy templates
-dn: techniqueCategoryId=SystemActiveTechnique,techniqueCategoryId=ActiveTechniqueLibraryRoot,ou=Rudder,cn=rudder-configuration
+dn: techniqueCategoryId=Rudder Internal,techniqueCategoryId=Active Techniques,ou=Rudder,cn=rudder-configuration
 objectClass: techniqueCategory
 objectClass: top
-cn: System User policy template library
-description: This is the root category for the system Policy Templates.
-techniqueCategoryId: SystemActiveTechnique
+cn: Active techniques used by Rudder
+description: This category contains "system" active techniques, used to configure Rudder agents and essential parts of Rudder server.
+techniqueCategoryId: Rudder Internal
 isSystem: TRUE
 
 # Distribute policy (root policy server)
-dn: activeTechniqueId=distributePolicy,techniqueCategoryId=SystemActiveTechnique,techniqueCategoryId=ActiveTechniqueLibraryRoot,ou=Rudder,cn=rudder-configuration
+dn: activeTechniqueId=distributePolicy,techniqueCategoryId=Rudder Internal,techniqueCategoryId=Active Techniques,ou=Rudder,cn=rudder-configuration
 objectClass: activeTechnique
 objectClass: top
 techniqueId: distributePolicy
@@ -150,7 +150,7 @@ isEnabled: TRUE
 isSystem: TRUE
 
 # common (has policy server)
-dn: activeTechniqueId=common,techniqueCategoryId=SystemActiveTechnique,techniqueCategoryId=ActiveTechniqueLibraryRoot,ou=Rudder,cn=rudder-configuration
+dn: activeTechniqueId=common,techniqueCategoryId=Rudder Internal,techniqueCategoryId=Active Techniques,ou=Rudder,cn=rudder-configuration
 objectClass: activeTechnique
 objectClass: top
 techniqueId: common
@@ -160,7 +160,7 @@ isEnabled: TRUE
 isSystem: TRUE
 
 # inventory
-dn: activeTechniqueId=inventory,techniqueCategoryId=SystemActiveTechnique,techniqueCategoryId=ActiveTechniqueLibraryRoot,ou=Rudder,cn=rudder-configuration
+dn: activeTechniqueId=inventory,techniqueCategoryId=Rudder Internal,techniqueCategoryId=Active Techniques,ou=Rudder,cn=rudder-configuration
 objectClass: activeTechnique
 objectClass: top
 techniqueId: inventory
@@ -169,7 +169,7 @@ acceptationTimestamp: {"1.0":"20110715124328.999Z"}
 isEnabled: TRUE
 isSystem: TRUE
 
-dn: directiveId=inventory-all,activeTechniqueId=inventory,techniqueCategoryId=SystemActiveTechnique,techniqueCategoryId=ActiveTechniqueLibraryRoot,ou=Rudder,cn=rudder-configuration
+dn: directiveId=inventory-all,activeTechniqueId=inventory,techniqueCategoryId=Rudder Internal,techniqueCategoryId=Active Techniques,ou=Rudder,cn=rudder-configuration
 objectClass: directive
 objectClass: top
 directiveId: inventory-all
