@@ -76,8 +76,8 @@ case class SimpleNodeConfiguration(
   , currentMinimalNodeConfig   : MinimalNodeConfig
   , targetMinimalNodeConfig    : MinimalNodeConfig
   , writtenDate                : Option[DateTime]
-  , currentSystemVariables     :  Map[String, Variable]
-  , targetSystemVariables      :  Map[String, Variable]
+  , currentSystemVariables     : Map[String, Variable]
+  , targetSystemVariables      : Map[String, Variable]
 ) extends NodeConfiguration with HashcodeCaching {
     
   
@@ -91,14 +91,11 @@ case class SimpleNodeConfiguration(
       case None =>
         // we first need to fetch all the policies in a mutable map to modify them
         val newPoliciesInstances =  mutable.Map[Cf3PolicyDraftId, RuleWithCf3PolicyDraft]() 
-        __targetPoliciesInstances.foreach { directive => 
-            newPoliciesInstances += ( ruleWithCf3PolicyDraft.cf3PolicyDraft.id ->directive.copy()) }
-        
-        
+        __targetPoliciesInstances.foreach { cf3 => 
+            newPoliciesInstances += ( cf3.cf3PolicyDraft.id -> cf3.copy()) }
   
         updateAllUniqueVariables(ruleWithCf3PolicyDraft.cf3PolicyDraft,newPoliciesInstances)
         newPoliciesInstances += (ruleWithCf3PolicyDraft.cf3PolicyDraft.id -> ruleWithCf3PolicyDraft.copy())
-        
         
         Full(copy(__targetPoliciesInstances = newPoliciesInstances.values.toSeq))
       case Some(x) => Failure("An instance of the policy with the same identifier %s already exists".format(ruleWithCf3PolicyDraft.cf3PolicyDraft.id.value))
