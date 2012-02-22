@@ -58,7 +58,7 @@
 
 dn: nodeId=root,ou=Nodes Configuration,ou=Rudder,cn=rudder-configuration
 objectClass: rootPolicyServerNodeConfiguration
-objectClass: serverNodeConfiguration
+objectClass: nodeConfiguration
 objectClass: top
 nodeId: root
 isModified: TRUE
