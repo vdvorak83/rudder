@@ -52,15 +52,15 @@ import net.liftweb.common.Box
 
 trait DeploymentStatusUnserialisation {
   /**
-   * version 1:
-   * <deploymentStatus fileFormat="1.0">
+   * Version 2:
+   * <deploymentStatus fileFormat="2.0">
           <id>{d.id}</id>
           <started>{d.started}</started>
           <ended>{d.ended}</ended>
           <status>success</status>
      </deploymentStatus>
      
-     <deploymentStatus fileFormat="1.0">
+     <deploymentStatus fileFormat="2.0">
           <id>{d.id}</id>
           <started>{d.started}</started>
           <ended>{d.ended}</ended>
@@ -82,8 +82,8 @@ trait DeploymentStatusUnserialisation {
  */
 trait NodeGroupCategoryUnserialisation {
   /**
-   * Version 1:
-     <groupLibraryCategory fileFormat="1.0">
+   * Version 2:
+     <groupLibraryCategory fileFormat="2.0">
         <id>{cat.id.value}</id>
         <displayName>{cat.name}</displayName>
         <description>{cat.description}</serial>
@@ -99,8 +99,8 @@ trait NodeGroupCategoryUnserialisation {
  */
 trait NodeGroupUnserialisation {
   /**
-   * Version 1.0
-     <nodeGroup fileFormat="1.0">
+   * Version 2.0
+     <nodeGroup fileFormat="2.0">
        <id>{group.id.value}</id>
        <displayName>{group.id.name}</displayName>
        <description>{group.id.description}</description>
@@ -123,7 +123,7 @@ trait NodeGroupUnserialisation {
  */
 trait RuleUnserialisation {
   /**
-   * Version 1:
+   * Version 2:
      <rule fileName="1.0">
         <id>{rule.id.value}</id>
         <name>{rule.name}</name>
@@ -151,8 +151,8 @@ trait RuleUnserialisation {
  */
 trait ActiveTechniqueCategoryUnserialisation {
   /**
-   * Version 1:
-     <policyLibraryCategory fileFormat="1.0">
+   * Version 2:
+     <policyLibraryCategory fileFormat="2.0">
         <id>{uptc.id.value}</id>
         <displayName>{uptc.name}</displayName>
         <description>{uptc.description}</serial>
@@ -170,8 +170,8 @@ trait ActiveTechniqueCategoryUnserialisation {
  */
 trait ActiveTechniqueUnserialisation {
   /**
-   * Version 1:
-     <policyLibraryTemplate fileFormat="1.0">
+   * Version 2:
+     <policyLibraryTemplate fileFormat="2.0">
         <id>{activeTechnique.id.value}</id>
         <techniqueName>{activeTechnique.techniqueName}</techniqueName>
         <isEnabled>{activeTechnique.isSystem}</isEnabled>
@@ -192,8 +192,8 @@ trait ActiveTechniqueUnserialisation {
  */
 trait DirectiveUnserialisation {
   /**
-   * Version 1.0
-     <directive fileFormat="1.0">
+   * Version 2.0
+     <directive fileFormat="2.0">
        <id>{directive.id.value}</id>
        <displayName>{directive.name}</displayName>
        <techniqueName>{PT name}</techniqueName>

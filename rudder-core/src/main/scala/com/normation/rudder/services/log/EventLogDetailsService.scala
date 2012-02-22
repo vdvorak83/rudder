@@ -64,6 +64,7 @@ import com.normation.rudder.repository.GitPath
 import com.normation.rudder.repository.GitCommitId
 import com.normation.rudder.repository.GitArchiveId
 import org.eclipse.jgit.lib.PersonIdent
+import com.normation.rudder.domain.Constants
 
 /**
  * A service that helps mapping event log details to there structured data model.
@@ -177,8 +178,8 @@ class EventLogDetailsServiceImpl(
   }  
   
   /**
-   * Version 1:
-     <rule changeType="add" fileFormat="1.0">
+   * Version 2:
+     <rule changeType="add" fileFormat="2.0">
         <id>{rule.id.value}</id>
         <name>{rule.name}</name>
         <serial>{rule.serial}</serial>
@@ -199,8 +200,8 @@ class EventLogDetailsServiceImpl(
   }
   
   /**
-   * Version 1:
-     <rule changeType="delete" fileFormat="1.0">
+   * Version 2:
+     <rule changeType="delete" fileFormat="2.0">
         <id>{rule.id.value}</id>
         <name>{rule.name}</name>
         <serial>{rule.serial}</serial>
@@ -240,8 +241,8 @@ class EventLogDetailsServiceImpl(
                              else Failure("Rule attribute does not have changeType=modify: " + entry)
                            }
       fileFormatOk      <- {
-                             if(rule.attribute("fileFormat").map( _.text ) == Some("1.0")) Full("OK")
-                             else Failure("Bad fileFormat (expecting 1.0): " + entry)
+                             if(rule.attribute("fileFormat").map( _.text ) == Some(Constants.XML_FILE_FORMAT_2_0)) Full("OK")
+                             else Failure("Bad fileFormat (expecting %s): %s".format(Constants.XML_FILE_FORMAT_2_0, entry))
                            }
       id                <- (rule \ "id").headOption.map( _.text ) ?~! ("Missing attribute 'id' in entry type rule : " + entry)
       displayName       <- (rule \ "displayName").headOption.map( _.text ) ?~! ("Missing attribute 'displayName' in entry type rule : " + entry)
@@ -335,8 +336,8 @@ class EventLogDetailsServiceImpl(
                                  else Failure("Directive attribute does not have changeType=modify: " + entry)
                                }
       fileFormatOk          <- {
-                                 if(directive.attribute("fileFormat").map( _.text ) == Some("1.0")) Full("OK")
-                                 else Failure("Bad fileFormat (expecting 1.0): " + entry)
+                                 if(directive.attribute("fileFormat").map( _.text ) == Some(Constants.XML_FILE_FORMAT_2_0)) Full("OK")
+                                 else Failure("Bad fileFormat (expecting %s): %s".format(Constants.XML_FILE_FORMAT_2_0, entry))
                                }
       id                    <- (directive \ "id").headOption.map( _.text ) ?~! ("Missing attribute 'id' in entry type directive : " + entry)
       ptName                <- (directive \ "techniqueName").headOption.map( _.text ) ?~! ("Missing attribute 'techniqueName' in entry type directive : " + entry)
@@ -393,8 +394,8 @@ class EventLogDetailsServiceImpl(
                             else Failure("NodeGroup attribute does not have changeType=modify: " + entry)
                           }
       fileFormatOk    <- {
-                           if(group.attribute("fileFormat").map( _.text ) == Some("1.0")) Full("OK")
-                           else Failure("Bad fileFormat (expecting 1.0): " + entry)
+                           if(group.attribute("fileFormat").map( _.text ) == Some(Constants.XML_FILE_FORMAT_2_0)) Full("OK")
+                           else Failure("Bad fileFormat (expecting %s): %s".format(Constants.XML_FILE_FORMAT_2_0, entry))
                          }
       id              <- (group \ "id").headOption.map( _.text ) ?~! ("Missing attribute 'id' in entry type nodeGroup : " + entry)
       displayName     <- (group \ "displayName").headOption.map( _.text ) ?~! ("Missing attribute 'displayName' in entry type nodeGroup : " + entry)
@@ -464,8 +465,8 @@ class EventLogDetailsServiceImpl(
                         else Failure("node attribute does not have action=%s: ".format(action) + entry)
                       }
       fileFormatOk <- {
-                        if(details.attribute("fileFormat").map( _.text ) == Some("1.0")) Full("OK")
-                        else Failure("Bad fileFormat (expecting 1.0): " + entry)
+                        if(details.attribute("fileFormat").map( _.text ) == Some(Constants.XML_FILE_FORMAT_2_0)) Full("OK")
+                        else Failure("Bad fileFormat (expecting %s): %s".format(Constants.XML_FILE_FORMAT_2_0, entry))
                       }
       nodeId       <- (details \ "id").headOption.map( _.text ) ?~! ("Missing attribute 'id' in entry type node: " + entry)
       version      <- (details \ "inventoryVersion").headOption.map( _.text ) ?~! ("Missing attribute 'inventoryVersion' in entry type node : " + entry)
@@ -500,8 +501,8 @@ class EventLogDetailsServiceImpl(
                           else Failure("node attribute does not have action=%s: ".format(action) + entry)
                         }
       fileFormatOk   <- {
-                          if(details.attribute("fileFormat").map( _.text ) == Some("1.0")) Full("OK")
-                          else Failure("Bad fileFormat (expecting 1.0): " + entry)
+                          if(details.attribute("fileFormat").map( _.text ) == Some(Constants.XML_FILE_FORMAT_2_0)) Full("OK")
+                          else Failure("Bad fileFormat (expecting %s): %s".format(Constants.XML_FILE_FORMAT_2_0, entry))
                         }
       nodeId         <- (details \ "id").headOption.map( _.text ) ?~! ("Missing attribute 'id' in entry type node: " + entry)
       name           <- (details \ "name").headOption.map( _.text ) ?~! ("Missing attribute 'name' in entry type node : " + entry)
