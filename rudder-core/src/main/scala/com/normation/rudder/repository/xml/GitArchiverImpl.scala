@@ -194,7 +194,7 @@ class GitActiveTechniqueCategoryArchiverImpl(
   override lazy val relativePath = techniqueLibraryRootDir
   override def  getCategoryName(categoryId:ActiveTechniqueCategoryId) = categoryId.value
   
-  override lazy val tagPrefix = "archives/policy-library/"
+  override lazy val tagPrefix = "archives/directives/"
   
   private[this] def newActiveTechniquecFile(uptcId:ActiveTechniqueCategoryId, parents: List[ActiveTechniqueCategoryId]) = {
     new File(newCategoryDirectory(uptcId, parents), serializedCategoryName) 

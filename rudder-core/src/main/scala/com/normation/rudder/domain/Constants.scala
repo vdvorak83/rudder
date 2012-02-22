@@ -73,10 +73,12 @@ object Constants {
   
   
   val XML_FILE_FORMAT_1_0 = "1.0"
+  val XML_FILE_FORMAT_2_0 = "2.0"
     
-  val CONFIGURATION_RULES_ARCHIVE_TAG = "#configuration-rules-archive"
+    
+  val CONFIGURATION_RULES_ARCHIVE_TAG = "#rules-archive"
   val GROUPS_ARCHIVE_TAG = "#groups-archive" 
-  val POLICY_LIBRARY_ARCHIVE_TAG = "#policy-library-archive"
+  val POLICY_LIBRARY_ARCHIVE_TAG = "#directives-archive"
   val FULL_ARCHIVE_TAG = "#full-archive"
     
 }

@@ -205,11 +205,11 @@ class AppConfig extends Loggable {
   val prettyPrinter = new PrettyPrinter(120, 2)
 
   
-  val userLibraryDirectoryName = "policy-library"
+  val userLibraryDirectoryName = "directives"
     
   val groupLibraryDirectoryName = "groups"
   
-  val rulesDirectoryName = "configuration-rules"
+  val rulesDirectoryName = "rules"
     
   // metadata.xml parser
   @Bean
