@@ -67,7 +67,7 @@ attributeTypes: ( 1.3.6.1.4.1.35061.2.1.108
   SUP uuid )
 attributeTypes: ( 1.3.6.1.4.1.35061.2.1.109
   NAME 'ruleId'
-  DESC 'Unique identifier for a configuration rule'
+  DESC 'Unique identifier for a rule'
   SUP uuid )
 #######################################################################
 attributeTypes: ( 1.3.6.1.4.1.35061.2.1.201
@@ -179,7 +179,7 @@ attributeTypes: ( 1.3.6.1.4.1.35061.2.1.218
   SUBSTR caseIgnoreSubstringsMatch )
 attributeTypes: ( 1.3.6.1.4.1.35061.2.1.219
   NAME 'serial'
-  DESC 'The serial of the Configuration Rule'
+  DESC 'The serial of the Rule'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
   EQUALITY integerMatch
   ORDERING integerOrderingMatch )
@@ -230,7 +230,7 @@ attributeTypes: ( 1.3.6.1.4.1.35061.2.1.225
 # * user library of policy template categories
 # * activeTechnique
 # * directive
-# * configuration rules
+# * rules
 # 
 ### nodes (simple and policy server) for Rudder ###
 objectClasses: ( 1.3.6.1.4.1.35061.2.2.1
@@ -301,10 +301,10 @@ objectClasses: ( 1.3.6.1.4.1.35061.2.2.23
   MUST ( directiveId $ techniqueVersion )
   MAY ( cn $ description $ longDescription $ isEnabled $ isSystem $
   directivePriority $ directiveVariable  ) )
-### configuration rules ###
+### rules ###
 objectClasses: ( 1.3.6.1.4.1.35061.2.2.30
   NAME 'rule'
-  DESC 'A configuration rule'
+  DESC 'A rule'
   SUP top
   STRUCTURAL
   MUST ( ruleId  $ serial )
@@ -348,13 +348,13 @@ objectClasses: ( 1.3.6.1.4.1.35061.2.2.103
   techniqueId $ techniqueVersion $
   ruleId ) )
 objectClasses: ( 1.3.6.1.4.1.35061.2.2.104
-  NAME 'nodeConfiguration'
+  NAME 'directiveNodeConfiguration'
   DESC 'An instance of a policy'
   SUP abstractDirectiveNodeConfiguration
   STRUCTURAL
   MUST ( directiveId ) )
 objectClasses: ( 1.3.6.1.4.1.35061.2.2.105
-  NAME 'targetNodeConfiguration'
+  NAME 'targetDirectiveNodeConfiguration'
   DESC 'An instance of a target state for a policy instance'
   SUP abstractDirectiveNodeConfiguration
   STRUCTURAL
