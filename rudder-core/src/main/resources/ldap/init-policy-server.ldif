@@ -167,12 +167,10 @@ directiveVariable: CHILDRENID[0]:${hasPolicyServer-root.target.id}
 
 
 #######################################################################################################################
-## Configuration rule library
+## Rules
 #######################################################################################################################
 
-# CR
-
-dn: ruleId=root-DP,ou=Configuration Rules,ou=Rudder,cn=rudder-configuration
+dn: ruleId=root-DP,ou=Rules,ou=Rudder,cn=rudder-configuration
 objectClass: rule
 objectClass: top
 ruleId: root-DP
@@ -185,7 +183,7 @@ isSystem: TRUE
 longDescription: This rule allows to distribute policies to nodes
 serial: 0
 
-dn: ruleId=hasPolicyServer-root,ou=Configuration Rules,ou=Rudder,cn=rudder-configuration
+dn: ruleId=hasPolicyServer-root,ou=Rules,ou=Rudder,cn=rudder-configuration
 objectClass: rule
 objectClass: top
 ruleId: hasPolicyServer-root

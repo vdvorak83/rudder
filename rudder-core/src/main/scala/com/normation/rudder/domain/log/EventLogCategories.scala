@@ -115,7 +115,7 @@ final case object ReloadTechniqueLibraryType extends EventLogType {
   def serialize = "ReloadTechniqueLibrary"
 }
 
-// configuration rule related event type
+// rule related event type
 final case object AddRuleEventType extends EventLogType {
   def serialize = "RuleAdded"
 }

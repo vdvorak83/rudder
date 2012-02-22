@@ -208,14 +208,14 @@ class LDAPEntityMapper(
    * Build the ActiveTechniqueCategoryId from the given DN
    */
   def dn2ActiveTechniqueCategoryId(dn:DN) : ActiveTechniqueCategoryId = {
-    rudderDit.POLICY_TEMPLATE_LIB.getCategoryIdValue(dn) match {
+    rudderDit.ACTIVE_TECHNIQUES_LIB.getCategoryIdValue(dn) match {
       case Full(value) => ActiveTechniqueCategoryId(value)
       case e:EmptyBox => throw new RuntimeException("The dn %s is not a valid User Policy Template Category ID. Error was: %s".format(dn,e.toString))
     }
   }
   
   def dn2ActiveTechniqueId(dn:DN) : ActiveTechniqueId = {
-    rudderDit.POLICY_TEMPLATE_LIB.getActiveTechniqueId(dn) match {
+    rudderDit.ACTIVE_TECHNIQUES_LIB.getActiveTechniqueId(dn) match {
       case Full(value) => ActiveTechniqueId(value)
       case e:EmptyBox => throw new RuntimeException("The dn %s is not a valid User Policy Template ID. Error was: %s".format(dn,e.toString))
     }
@@ -242,16 +242,16 @@ class LDAPEntityMapper(
   }
 
   def dn2LDAPRuleID(dn:DN) : DirectiveId = {
-    rudderDit.POLICY_TEMPLATE_LIB.getLDAPRuleID(dn) match {
+    rudderDit.ACTIVE_TECHNIQUES_LIB.getLDAPRuleID(dn) match {
       case Full(value) => DirectiveId(value)
-      case e:EmptyBox => throw new RuntimeException("The dn %s is not a valid User Policy Instance ID. Error was: %s".format(dn,e.toString))
+      case e:EmptyBox => throw new RuntimeException("The dn %s is not a valid Directive ID. Error was: %s".format(dn,e.toString))
     }    
   }
   
   def dn2RuleId(dn:DN) : RuleId = {
-    rudderDit.CONFIG_RULE.getRuleId(dn) match {
+    rudderDit.RULES.getRuleId(dn) match {
       case Full(value) => RuleId(value)
-      case e:EmptyBox => throw new RuntimeException("The dn %s is not a valid Configuration Rule ID. Error was: %s".format(dn,e.toString))
+      case e:EmptyBox => throw new RuntimeException("The dn %s is not a valid Rule ID. Error was: %s".format(dn,e.toString))
     }
   }
 
@@ -287,7 +287,7 @@ class LDAPEntityMapper(
    * children and items are ignored
    */
   def activeTechniqueCategory2ldap(category:ActiveTechniqueCategory, parentDN:DN) = {
-    val entry = rudderDit.POLICY_TEMPLATE_LIB.activeTechniqueCategoryModel(category.id.value, parentDN)
+    val entry = rudderDit.ACTIVE_TECHNIQUES_LIB.activeTechniqueCategoryModel(category.id.value, parentDN)
     entry +=! (A_NAME, category.name)
     entry +=! (A_DESCRIPTION, category.description)
     entry +=! (A_IS_SYSTEM, category.isSystem.toLDAPString)
@@ -338,7 +338,7 @@ class LDAPEntityMapper(
   }
   
   def activeTechnique2Entry(activeTechnique:ActiveTechnique, parentDN:DN) : LDAPEntry = {
-    val entry = rudderDit.POLICY_TEMPLATE_LIB.activeTechniqueModel(
+    val entry = rudderDit.ACTIVE_TECHNIQUES_LIB.activeTechniqueModel(
         activeTechnique.id.value, 
         parentDN,
         activeTechnique.techniqueName,
@@ -469,7 +469,7 @@ class LDAPEntityMapper(
   }
   
   def userDirective2Entry(directive:Directive, parentDN:DN) : LDAPEntry = {
-    val entry = rudderDit.POLICY_TEMPLATE_LIB.directiveModel(
+    val entry = rudderDit.ACTIVE_TECHNIQUES_LIB.directiveModel(
         directive.id.value, 
         directive.techniqueVersion,
         parentDN
@@ -489,7 +489,7 @@ class LDAPEntityMapper(
   def entry2OptTarget(optValue:Option[String]) : Box[Option[RuleTarget]] = {
     (for {
       targetValue <- Box(optValue)
-      target <- RuleTarget.unser(targetValue) ?~! "Bad parameter for a configuration rule target: %s".format(targetValue)
+      target <- RuleTarget.unser(targetValue) ?~! "Bad parameter for a rule target: %s".format(targetValue)
     } yield {
       target
     }) match {
@@ -525,11 +525,11 @@ class LDAPEntityMapper(
   
   
   /**
-   * Map a configuration rule to an LDAP Entry.
+   * Map a rule to an LDAP Entry.
    * WARN: serial is NEVER mapped. 
    */
   def rule2Entry(rule:Rule) : LDAPEntry = {
-    val entry = rudderDit.CONFIG_RULE.ruleModel(
+    val entry = rudderDit.RULES.ruleModel(
         rule.id.value, 
         rule.name,
         rule.isEnabledStatus,

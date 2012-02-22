@@ -55,8 +55,8 @@ case class Rule(
   id:RuleId,
   name:String,
   serial:Int,
-  target:Option[RuleTarget] = None, //is not mandatory, but if not present, configuration rule is disabled
-  directiveIds:Set[DirectiveId] = Set(), //is not mandatory, but if not present, configuration rule is disabled
+  target:Option[RuleTarget] = None, //is not mandatory, but if not present, rule is disabled
+  directiveIds:Set[DirectiveId] = Set(), //is not mandatory, but if not present, rule is disabled
   shortDescription:String = "",
   longDescription:String = "",
   isEnabledStatus:Boolean = false,

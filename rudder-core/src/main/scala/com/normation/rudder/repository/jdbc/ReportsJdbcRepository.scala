@@ -151,7 +151,7 @@ class ReportsJdbcRepository(jdbcTemplate : JdbcTemplate) extends ReportsReposito
 
   
   /**
-   * Return the last (really the last, serial wise, with full execution) reports for a configuration rule
+   * Return the last (really the last, serial wise, with full execution) reports for a rule
    */
   def findLastReportByRule(
       ruleId : RuleId

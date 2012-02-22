@@ -83,7 +83,7 @@ class LDAPActiveTechniqueRepository(
       id:ID, 
       filter: ID => Filter,
       attributes:String*) : Box[LDAPEntry] = {
-    val uptEntries = con.searchSub(rudderDit.POLICY_TEMPLATE_LIB.dn, filter(id), attributes:_*)
+    val uptEntries = con.searchSub(rudderDit.ACTIVE_TECHNIQUES_LIB.dn, filter(id), attributes:_*)
     uptEntries.size match {
       case 0 => Empty
       case 1 => Full(uptEntries(0))

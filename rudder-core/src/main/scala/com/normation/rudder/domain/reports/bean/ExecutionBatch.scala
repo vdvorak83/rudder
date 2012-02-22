@@ -52,7 +52,7 @@ import com.normation.rudder.domain.reports.DirectiveExpectedReports
  */
 trait ExecutionBatch {
   val ruleId : RuleId
-  val serial : Int // the serial of the configuration rule
+  val serial : Int // the serial of the rule
   
   val executionTime : DateTime // this is the time of the batch
   

@@ -181,14 +181,14 @@ isSystem: TRUE
 directivePriority: 0
 
 #######################################################################################################################
-## Configuration rule library
+## Rules
 #######################################################################################################################
-dn: ou=Configuration Rules,ou=Rudder,cn=rudder-configuration
+dn: ou=Rules,ou=Rudder,cn=rudder-configuration
 objectClass: organizationalUnit
 objectClass: top
-ou: Configuration Rules
+ou: Rules
 
-dn: ruleId=inventory-all,ou=Configuration Rules,ou=Rudder,cn=rudder-configuration
+dn: ruleId=inventory-all,ou=Rules,ou=Rudder,cn=rudder-configuration
 objectClass: rule
 objectClass: top
 ruleId: inventory-all
@@ -198,6 +198,6 @@ cn: Rudder system policy: daily inventory
 description: Inventory
 isEnabled: TRUE
 isSystem: TRUE
-longDescription: This CR is to have all node doing inventories
+longDescription: This rule makes all nodes do daily self inventories
 serial: 0
 

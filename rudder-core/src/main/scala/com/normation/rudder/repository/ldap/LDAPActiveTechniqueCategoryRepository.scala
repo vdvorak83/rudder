@@ -103,7 +103,7 @@ class LDAPActiveTechniqueCategoryRepository(
    */
   def getCategoryEntry(con:LDAPConnection, id:ActiveTechniqueCategoryId, attributes:String*) : Box[LDAPEntry] = {
     userLibMutex.readLock {
-      val categoryEntries = con.searchSub(rudderDit.POLICY_TEMPLATE_LIB.dn,  EQ(A_TECHNIQUE_CATEGORY_UUID, id.value), attributes:_*)
+      val categoryEntries = con.searchSub(rudderDit.ACTIVE_TECHNIQUES_LIB.dn,  EQ(A_TECHNIQUE_CATEGORY_UUID, id.value), attributes:_*)
       categoryEntries.size match {
         case 0 => Empty
         case 1 => Full(categoryEntries(0))
@@ -119,7 +119,7 @@ class LDAPActiveTechniqueCategoryRepository(
     (for {
       con               <- ldap
       locked            <- userLibMutex.readLock
-      rootCategoryEntry <- con.get(rudderDit.POLICY_TEMPLATE_LIB.dn) ?~! "The root category of the user library of policy templates seems to be missing in LDAP directory. Please check its content"
+      rootCategoryEntry <- con.get(rudderDit.ACTIVE_TECHNIQUES_LIB.dn) ?~! "The root category of the user library of policy templates seems to be missing in LDAP directory. Please check its content"
       // look for sub category and policy template
       rootCategory      <- mapper.entry2ActiveTechniqueCategory(rootCategoryEntry) ?~! "Error when mapping from an LDAP entry to a User Policy Template Category: %s".format(rootCategoryEntry)
     } yield {
@@ -139,9 +139,9 @@ class LDAPActiveTechniqueCategoryRepository(
     (for {
       con               <- ldap
       locked            <- userLibMutex.readLock
-      rootCategoryEntry <- con.get(rudderDit.POLICY_TEMPLATE_LIB.dn) ?~! "The root category of the user library of policy templates seems to be missing in LDAP directory. Please check its content"
+      rootCategoryEntry <- con.get(rudderDit.ACTIVE_TECHNIQUES_LIB.dn) ?~! "The root category of the user library of policy templates seems to be missing in LDAP directory. Please check its content"
       filter            =  if(includeSystem) IS(OC_TECHNIQUE_CATEGORY) else AND(NOT(EQ(A_IS_SYSTEM, true.toLDAPString)),IS(OC_TECHNIQUE_CATEGORY))
-      entries           =  con.searchSub(rudderDit.POLICY_TEMPLATE_LIB.dn, filter) //double negation is mandatory, as false may not be present
+      entries           =  con.searchSub(rudderDit.ACTIVE_TECHNIQUES_LIB.dn, filter) //double negation is mandatory, as false may not be present
       allEntries        =  entries :+ rootCategoryEntry
       categories        <- boxSequence(allEntries.map(entry => mapper.entry2ActiveTechniqueCategory(entry) ?~! "Error when transforming LDAP entry %s into a user policy template category".format(entry) ))
     } yield {
@@ -218,7 +218,7 @@ class LDAPActiveTechniqueCategoryRepository(
       con              <- ldap 
       oldCategoryEntry <- getCategoryEntry(con, category.id, "1.1") ?~! "Entry with ID '%s' was not found".format(category.id)
       categoryEntry    =  mapper.activeTechniqueCategory2ldap(category,oldCategoryEntry.dn.getParent)
-      canAddByName     <- if(categoryEntry.dn != rudderDit.POLICY_TEMPLATE_LIB.dn && existsByName(con,categoryEntry.dn.getParent, category.name, category.id.value)) {
+      canAddByName     <- if(categoryEntry.dn != rudderDit.ACTIVE_TECHNIQUES_LIB.dn && existsByName(con,categoryEntry.dn.getParent, category.name, category.id.value)) {
                             Failure("A category with that name already exists in that category: category names must be unique for a given level")
                           } else {
                             Full("Can add, no sub categorie with that name")
@@ -262,7 +262,7 @@ class LDAPActiveTechniqueCategoryRepository(
    */
   def getParentsForActiveTechniqueCategory(id:ActiveTechniqueCategoryId) : Box[List[ActiveTechniqueCategory]] = {
     userLibMutex.readLock {
-      //TODO : LDAPify that, we can have the list of all DN from id to root at the begining (just dn.getParent until rudderDit.POLICY_TEMPLATE_LIB.dn)
+      //TODO : LDAPify that, we can have the list of all DN from id to root at the begining (just dn.getParent until rudderDit.ACTIVE_TECHNIQUES_LIB.dn)
       if(id == getActiveTechniqueLibrary.id) Full(Nil)
       else getParentActiveTechniqueCategory(id) match {
         case Full(parent) => getParentsForActiveTechniqueCategory(parent.id).map(parents => parent :: parents)
@@ -274,7 +274,7 @@ class LDAPActiveTechniqueCategoryRepository(
   def getParentsForActiveTechnique(id:ActiveTechniqueId) : Box[ActiveTechniqueCategory] = {
     userLibMutex.readLock { for {
       con <- ldap
-      uptEntries = con.searchSub(rudderDit.POLICY_TEMPLATE_LIB.dn, EQ(A_ACTIVE_TECHNIQUE_UUID, id.value))
+      uptEntries = con.searchSub(rudderDit.ACTIVE_TECHNIQUES_LIB.dn, EQ(A_ACTIVE_TECHNIQUE_UUID, id.value))
       uptEntry <- uptEntries.size match {
         case 0 => Failure("Can not find user policy template with id '%s'".format(id))
         case 1 => Full(uptEntries(0))

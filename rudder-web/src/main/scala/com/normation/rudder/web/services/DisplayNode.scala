@@ -335,10 +335,10 @@ object DisplayNode extends Loggable {
   
   //show a comma separated list with description in tooltip 
   private def displayPolicies(node:NodeInventory) : NodeSeq = {
-    <b>Applied policies: </b> ++ {Text{if(node.policies.isEmpty) {
+    <b>Applied policies: </b> ++ {Text{if(node.techniques.isEmpty) {
         "None"
       } else {
-        node.policies.mkString(", ")
+        node.techniques.mkString(", ")
       }}
     }
   }

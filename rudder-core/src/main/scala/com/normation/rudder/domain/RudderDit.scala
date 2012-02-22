@@ -131,11 +131,11 @@ class RudderDit(val BASE_DN:DN) extends AbstractDit {
   
   
   //here, we can't use activeTechniqueCategory because we want a subclass
-  val POLICY_TEMPLATE_LIB = new CATEGORY(
-      uuid = "ActiveTechniqueLibraryRoot",
+  val ACTIVE_TECHNIQUES_LIB = new CATEGORY(
+      uuid = "Active Techniques",
       parentDN = BASE_DN,
-      name = "User policy template library's root",
-      description = "This is the root category for the user library of Policy Templates. It contains subcategories and policy templates",
+      name = "Root of active techniques's library",
+      description = "This is the root category for active techniques. It contains subcategories, actives techniques and directives",
       isSystem = true,
       objectClass = OC_TECHNIQUE_CATEGORY,
       objectClassUuid = A_TECHNIQUE_CATEGORY_UUID
@@ -194,7 +194,7 @@ class RudderDit(val BASE_DN:DN) extends AbstractDit {
     
   }
   
-  val CONFIG_RULE = new OU("Configuration Rules", BASE_DN) {
+  val RULES = new OU("Rules", BASE_DN) {
     rules =>
     //check for the presence of that entry at bootstrap
     dit.register(rules.model)
@@ -337,11 +337,11 @@ class RudderDit(val BASE_DN:DN) extends AbstractDit {
        * There is both current and target policy instances,
        * they only differ on the objectType
        */
-      val POLICY_INSTANCE = new ENTRY1(A_DIRECTIVE_UUID) {
-        def dn(uuid:String,serverDN:DN) : DN = {
-          require(nonEmpty(uuid), "A policy instance UUID can not be empty")
-          require( !serverDN.isNullDN , "The parent (server) DN of a Node Role can not be empty")
-          new DN(this.rdn(uuid),serverDN)
+      val CF3POLICYDRAFT = new ENTRY1(A_DIRECTIVE_UUID) {
+        def dn(uuid:String,nodeConfigurationDN:DN) : DN = {
+          require(nonEmpty(uuid), "A CF3 Policy Draft ID can not be empty")
+          require( !nodeConfigurationDN.isNullDN , "Can not use a null DN for the Cf3 Policy Draft's node configuration")
+          new DN(this.rdn(uuid),nodeConfigurationDN)
         }
         
         def model(directiveUUID:String,serverDN:DN) : LDAPEntry = {
@@ -349,12 +349,12 @@ class RudderDit(val BASE_DN:DN) extends AbstractDit {
           mod +=! (A_OC, OC.objectClassNames(OC_RULE_WITH_CF3POLICYDRAFT).toSeq:_*)
           mod
         }     
-      } //end POLICY_INSTANCE
+      } //end CF3POLICYDRAFT
       
-      val TARGET_POLICY_INSTANCE = new ENTRY1(A_TARGET_DIRECTIVE_UUID) {
+      val TARGET_CF3POLICYDRAFT = new ENTRY1(A_TARGET_DIRECTIVE_UUID) {
         def dn(uuid:String,serverDN:DN) : DN = {
-          require(nonEmpty(uuid), "A policy instance UUID can not be empty")
-          require( !serverDN.isNullDN , "The parent (server) DN of a Node Role can not be empty")
+          require(nonEmpty(uuid), "A CF3 Policy Draft ID can not be empty")
+          require( !serverDN.isNullDN , "Can not use a null DN for the Cf3 Policy Draft's node configuration")
           new DN(this.rdn(uuid),serverDN)
         }
         
@@ -364,28 +364,11 @@ class RudderDit(val BASE_DN:DN) extends AbstractDit {
           mod
         }
         
-      } //end TARGET_POLICY_INSTANCE
+      } //end TARGET_CF3POLICYDRAFT
       
     } //end NODE_CONFIG
     
   } //end NODE_CONFIGS
-  
-//  val POLICY_INSTANCES = new OU("Policy Instances", BASE_DN) {
-//    policies =>
-//    
-//    val POLICY_INSTANCE = new ENTRY1(A_DIRECTIVE_UUID) {
-//      policy => 
-//      
-//      def model(id:Option[LDAPRuleUUID]) : LDAPEntry = {
-//        val mod = id match {
-//          case None =>  LDAPEntry(None,Some(policies.dn))
-//          case Some(u) => LDAPEntry(LDAPLDAPRuleID(u,policies.dn).dn)
-//        }
-//        mod +=! (A_OC, OC.objectClassNames(OC_POLICY_INSTANCE).toSeq:_*)
-//        mod
-//      }
-//    }
-//  }
   
   val ARCHIVES = new OU("Archives", BASE_DN) {
     archives =>

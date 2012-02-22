@@ -143,7 +143,7 @@ class ImportTechniqueLibraryImpl(
           }
         }
         
-        recSaveUserLib(rudderDit.POLICY_TEMPLATE_LIB.dn.getParent,userLib, isRoot = true)
+        recSaveUserLib(rudderDit.ACTIVE_TECHNIQUES_LIB.dn.getParent,userLib, isRoot = true)
       }
       
       
@@ -153,22 +153,22 @@ class ImportTechniqueLibraryImpl(
       //the sequence of operation to actually perform the swap with rollback
       for {
         con      <- ldap
-        gitId    <- con.get(rudderDit.POLICY_TEMPLATE_LIB.dn, OC_ACTIVE_TECHNIQUE_LIB_VERSION).map { entry => 
+        gitId    <- con.get(rudderDit.ACTIVE_TECHNIQUES_LIB.dn, OC_ACTIVE_TECHNIQUE_LIB_VERSION).map { entry => 
                       entry(OC_ACTIVE_TECHNIQUE_LIB_VERSION)
                     } ?~! "Error when looking for the root entry of the User Policy Template Library when trying to check for an existing revision number"
-        ok       <- moveToArchive(con, rudderDit.POLICY_TEMPLATE_LIB.dn, targetArchiveDN)
+        ok       <- moveToArchive(con, rudderDit.ACTIVE_TECHNIQUES_LIB.dn, targetArchiveDN)
         finished <- {
                       (for {
                         saved  <- saveUserLib(con, userLib, gitId)
                         system <-if(includeSystem) Full("OK") 
-                                   else copyBackSystemEntrie(con, rudderDit.POLICY_TEMPLATE_LIB.dn, targetArchiveDN) ?~! "Error when copying back system entries in the imported policy library"
+                                   else copyBackSystemEntrie(con, rudderDit.ACTIVE_TECHNIQUES_LIB.dn, targetArchiveDN) ?~! "Error when copying back system entries in the imported policy library"
                       } yield {
                         system
                       }) match {
                            case Full(unit)  => Full(unit)
                            case eb:EmptyBox => 
                              logger.error("Error when trying to load archived User Policy Library. Rollbaching to previous one.")
-                             restoreArchive(con, rudderDit.POLICY_TEMPLATE_LIB.dn, targetArchiveDN) match {
+                             restoreArchive(con, rudderDit.ACTIVE_TECHNIQUES_LIB.dn, targetArchiveDN) match {
                                case eb2: EmptyBox => eb ?~! "Error when trying to restore archive with ID '%s' for the user policy template library".format(archiveId.value)
                                case Full(_) => eb ?~! "Error when trying to load archived User Policy Library. A rollback to previous state was executed"
                              }

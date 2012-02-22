@@ -62,7 +62,7 @@ class LDAPGitRevisionProvider(
     //try to read from LDAP, and if we can't, returned the last available from git 
     (for {
       con <- ldap
-      entry <- con.get(rudderDit.POLICY_TEMPLATE_LIB.dn, A_TECHNIQUE_LIB_VERSION)
+      entry <- con.get(rudderDit.ACTIVE_TECHNIQUES_LIB.dn, A_TECHNIQUE_LIB_VERSION)
       refLib <- entry(A_TECHNIQUE_LIB_VERSION)
     } yield {
       refLib
@@ -98,7 +98,7 @@ class LDAPGitRevisionProvider(
 
   override def setCurrentRevTreeId(id: ObjectId): Unit = {
     ldap.foreach { con =>
-      con.get(rudderDit.POLICY_TEMPLATE_LIB.dn, A_OC) match {
+      con.get(rudderDit.ACTIVE_TECHNIQUES_LIB.dn, A_OC) match {
         case e: EmptyBox => logger.error("The root entry of the user template library was not found, the current revision won't be persisted")
         case Full(root) =>
           root += (A_OC, OC_ACTIVE_TECHNIQUE_LIB_VERSION)

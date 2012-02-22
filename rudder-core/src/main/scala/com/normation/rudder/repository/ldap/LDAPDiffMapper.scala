@@ -82,7 +82,7 @@ class LDAPDiffMapper(
   ///////////////////////////////////////////////////////////////////////////////////////
   
   
-  ///// Configuration rule diff /////
+  ///// rule diff /////
   
   def addChangeRecords2RuleDiff(crDn:DN, change:LDIFChangeRecord) : Box[AddRuleDiff] = {
     if(change.getParsedDN == crDn ) {
@@ -92,11 +92,11 @@ class LDAPDiffMapper(
           for {
             rule <- mapper.entry2Rule(e)
           } yield AddRuleDiff(rule)
-        case _ => Failure("Bad change record type for requested action 'add configuration rule': %s".format(change))
+        case _ => Failure("Bad change record type for requested action 'add rule': %s".format(change))
       }
         
     } else {
-      Failure("The following change record does not belong to Configuration Rule entry '%s': %s".format(crDn,change))
+      Failure("The following change record does not belong to Rule entry '%s': %s".format(crDn,change))
     }
   }
   
@@ -151,10 +151,10 @@ class LDAPDiffMapper(
         
         case noop:LDIFNoopChangeRecord => Full(None)
           
-        case _ => Failure("Bad change record type for requested action 'update configuration rule': %s".format(change))
+        case _ => Failure("Bad change record type for requested action 'update rule': %s".format(change))
       }
     } else {
-      Failure("The following change record does not belong to Configuration Rule entry '%s': %s".format(beforeChangeEntry.dn,change))
+      Failure("The following change record does not belong to Rule entry '%s': %s".format(beforeChangeEntry.dn,change))
     }
   }
 

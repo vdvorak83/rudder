@@ -257,8 +257,8 @@ class LDAPNodeConfigurationMapper(
     def fromDirective(identifiable:RuleWithCf3PolicyDraft,  serverEntry:LDAPEntry, isCurrent:Boolean) : LDAPEntry = {
       
       val entry =
-        if(isCurrent) rudderDit.NODE_CONFIGS.NODE_CONFIG.POLICY_INSTANCE.model(identifiable.cf3PolicyDraft.id.value, serverEntry.dn)
-        else rudderDit.NODE_CONFIGS.NODE_CONFIG.TARGET_POLICY_INSTANCE.model(identifiable.cf3PolicyDraft.id.value, serverEntry.dn)
+        if(isCurrent) rudderDit.NODE_CONFIGS.NODE_CONFIG.CF3POLICYDRAFT.model(identifiable.cf3PolicyDraft.id.value, serverEntry.dn)
+        else rudderDit.NODE_CONFIGS.NODE_CONFIG.TARGET_CF3POLICYDRAFT.model(identifiable.cf3PolicyDraft.id.value, serverEntry.dn)
       
       val vars = identifiable.cf3PolicyDraft.getVariables().values.toSeq :+ identifiable.cf3PolicyDraft.trackerVariable
       entry +=! (A_RULE_UUID, identifiable.ruleId.value)

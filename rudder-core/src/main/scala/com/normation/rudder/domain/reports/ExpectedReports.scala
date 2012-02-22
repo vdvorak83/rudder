@@ -52,8 +52,8 @@ import com.normation.utils.HashcodeCaching
 case class RuleExpectedReports(
     ruleId                  : RuleId
   , directiveExpectedReports: Seq[DirectiveExpectedReports]
-  , serial                  : Int // the serial of the configuration rule
-  , nodeJoinKey             : Int // the version id of the configuration rule, follows a sequence, used to join with the server table
+  , serial                  : Int // the serial of the rule
+  , nodeJoinKey             : Int // the version id of the rule, follows a sequence, used to join with the server table
   , nodeIds                 : Seq[NodeId]
   // the period where the configuration is applied to the servers
   , beginDate               : DateTime = DateTime.now()

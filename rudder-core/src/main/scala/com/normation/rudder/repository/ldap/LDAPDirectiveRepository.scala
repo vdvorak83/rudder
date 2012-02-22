@@ -74,7 +74,7 @@ class LDAPDirectiveRepository(
    * Retrieve the policy instance entry for the given ID, with the given connection
    */
   private[this] def getDirectiveEntry(con:LDAPConnection, id:DirectiveId, attributes:String*) : Box[LDAPEntry] = {
-    val piEntries = con.searchSub(rudderDit.POLICY_TEMPLATE_LIB.dn,  EQ(A_DIRECTIVE_UUID, id.value), attributes:_*)
+    val piEntries = con.searchSub(rudderDit.ACTIVE_TECHNIQUES_LIB.dn,  EQ(A_DIRECTIVE_UUID, id.value), attributes:_*)
     piEntries.size match {
       case 0 => Empty
       case 1 => Full(piEntries(0))
@@ -107,7 +107,7 @@ class LDAPDirectiveRepository(
       locked <- userLibMutex.readLock
       con    <- ldap
       //for each directive entry, map it. if one fails, all fails
-      directives    <- sequence(con.searchSub(rudderDit.POLICY_TEMPLATE_LIB.dn,  policyFilter(includeSystem))) { piEntry => 
+      directives    <- sequence(con.searchSub(rudderDit.ACTIVE_TECHNIQUES_LIB.dn,  policyFilter(includeSystem))) { piEntry => 
                   mapper.entry2Directive(piEntry) ?~! "Error when transforming LDAP entry into a Policy Instance. Entry: %s".format(piEntry)
                 }
     } yield {
@@ -208,7 +208,7 @@ class LDAPDirectiveRepository(
   /**
    * Delete a policy instance.
    * No dependency check are done, and so you will have to
-   * delete dependent configuration rule (or other items) by
+   * delete dependent rule (or other items) by
    * hand if you want.
    */
   def delete(id:DirectiveId, actor:EventActor) : Box[DeleteDirectiveDiff] = {

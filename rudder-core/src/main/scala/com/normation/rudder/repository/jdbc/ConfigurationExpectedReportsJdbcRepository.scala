@@ -119,7 +119,7 @@ class RuleExpectedReportsJdbcRepository(jdbcTemplate : JdbcTemplate)
   def saveExpectedReports(ruleId : RuleId, serial: Int,
               policyExpectedReports : Seq[DirectiveExpectedReports],
               nodes : Seq[NodeId]) : Box[RuleExpectedReports] = {
-     logger.info("Saving expected report for configuration rule {}", ruleId.value)
+     logger.info("Saving expected report for rule {}", ruleId.value)
      findCurrentExpectedReports(ruleId) match {
       case Some(x) =>
           logger.error("Inconsistency in the database : cannot save an already existing expected report")

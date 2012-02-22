@@ -38,7 +38,7 @@ import com.normation.utils.HashcodeCaching
 
 
 /**
- * That file define "diff" object between configuration rules.
+ * That file define "diff" object between rules.
  */
 
 sealed trait RuleDiff

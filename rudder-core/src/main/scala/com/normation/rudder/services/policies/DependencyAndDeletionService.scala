@@ -181,7 +181,7 @@ class DependencyAndDeletionServiceImpl(
       con:ReadOnlyLDAPConnection
     , id:DirectiveId
   ):Box[Seq[Rule]] = {
-    sequence(con.searchOne(rudderDit.CONFIG_RULE.dn, EQ(A_DIRECTIVE_UUID, id.value))) { entry =>
+    sequence(con.searchOne(rudderDit.RULES.dn, EQ(A_DIRECTIVE_UUID, id.value))) { entry =>
       mapper.entry2Rule(entry)
     }
   }
@@ -350,7 +350,7 @@ class DependencyAndDeletionServiceImpl(
   /////////////////////////////////////////////////////////////////////////////////
   
   private[this] def searchRules(con:ReadOnlyLDAPConnection, target:RuleTarget) : Box[Seq[Rule]] = {
-    sequence(con.searchOne(rudderDit.CONFIG_RULE.dn, EQ(A_RULE_TARGET, target.target))) { entry =>
+    sequence(con.searchOne(rudderDit.RULES.dn, EQ(A_RULE_TARGET, target.target))) { entry =>
       mapper.entry2Rule(entry)
     }  
   }

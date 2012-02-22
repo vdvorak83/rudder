@@ -65,7 +65,7 @@ class CheckInitUserTemplateLibrary(
   override def checks() : Unit = {
     ldap.foreach { con =>
     
-        con.get(rudderDit.POLICY_TEMPLATE_LIB.dn, A_INIT_DATETIME, A_OC) match {
+        con.get(rudderDit.ACTIVE_TECHNIQUES_LIB.dn, A_INIT_DATETIME, A_OC) match {
           case e:EmptyBox => logger.error("The root entry of the user template library was not found")
           case Full(root) => root.getAsGTime(A_INIT_DATETIME) match {
             case Some(date) => logger.debug("The root user template library was initialized on %s".format(date.dateTime.toString("YYYY/MM/dd HH:mm")))
